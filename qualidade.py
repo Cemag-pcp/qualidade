@@ -164,25 +164,21 @@ if submit_button:
             df_filtrado = df_filtrado.reset_index(drop=True)
             
             if nome_carreta.lower().find('bb') != -1:
-                """
-                Se tiver bomba dentro do código
-                """
+                
+                # Se tiver bomba dentro do código
                 ws['B41'] = '200391'
                 ws['C41'] = 'BOMBA'
                 ws['D41'] = 1
                     
             if nome_carreta.lower().find('rs/rd') != -1:
-                """
-                Se tiver rs/rd dentro do código
-                """
+                
+                # Se tiver rs/rd dentro do código
                 ws['B44'] = '214108'
                 ws['C44'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
                 ws['D44'] = 2
 
             if nome_carreta.lower().find('p') != -1:
-                """
-                Se tiver pneu dentro do código
-                """
+                # Se tiver pneu dentro do código
                 ws['B45'] = 'Pneus'
                 ws['C45'] = 'PNEUS'
                 ws['D45'] = 6
@@ -190,9 +186,7 @@ if submit_button:
             filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
 
             if len(filtro_rodas_cilindros) > 0:
-                """
-                Verificação se existe roda/cilindo para essa carreta
-                """
+                # Verificação se existe roda/cilindo para essa carreta
                 filtro_rodas_cilindros.reset_index(inplace=True, drop=True)
                 
                 try:
