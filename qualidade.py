@@ -16,6 +16,8 @@ from openpyxl import Workbook, load_workbook
 from PIL import Image
 from openpyxl.drawing.image import Image as xlImage
 from openpyxl.styles import Alignment
+from openpyxl.drawing.image import Image
+from PIL import Image as PILImage
 
 ###### CONECTANDO PLANILHAS ##########
 
@@ -94,9 +96,9 @@ today = today.strftime('%d/%m/%Y')
 filenames=[]
 
 with st.sidebar:
-
-    image = Image.open('logo-cemagL.png')
-    st.image(image, width=300)
+    img_path = 'logo-cemagL.png'
+    pil_img = PILImage.open(img_path)
+    st.image(pil_img, width=300)
 
 with st.form(key='my_form'):
     
@@ -149,16 +151,16 @@ if submit_button:
             wb = load_workbook('modelo_op_carpintaria.xlsx')
             ws = wb.active
 
-            ws['C5'] = dados_filtrados['Recurso'][i] 
-            ws['B6'] = dados_filtrados['Descrição'][i] 
+            ws['B5'] = dados_filtrados['Recurso'][i] 
+            ws['A6'] = dados_filtrados['Descrição'][i] 
             ws['G6'] = dados_filtrados['Pessoa'][i] #  data de hoje
-            ws['C7'] = dados_filtrados['Serie'][i]
+            ws['B7'] = dados_filtrados['Serie'][i]
             ws['G7'] = dados_filtrados['Cidade/Estado'][i]
-            ws['D7']  = tipo_filtro  # data da carga
+            ws['E7']  = tipo_filtro  # data da carga
             ws['E5'] = dados_filtrados['cor'][i]
-            ws['B42'] = 'ACESSÓRIOS 01'
-            ws['C42'] = 'ACESSÓRIOS'
-            ws['D42'] = 1
+            ws['A42'] = 'ACESSÓRIOS 01'
+            ws['B42'] = 'ACESSÓRIOS'
+            ws['C42'] = 1
 
             df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
             df_filtrado = df_filtrado.reset_index(drop=True)
@@ -166,22 +168,22 @@ if submit_button:
             if nome_carreta.lower().find('bb') != -1:
                 
                 # Se tiver bomba dentro do código
-                ws['B41'] = '200391'
-                ws['C41'] = 'BOMBA'
-                ws['D41'] = 1
+                ws['A36'] = '200391'
+                ws['B36'] = 'BOMBA'
+                ws['C36'] = 1
                     
             if nome_carreta.lower().find('rs/rd') != -1:
                 
                 # Se tiver rs/rd dentro do código
-                ws['B44'] = '214108'
-                ws['C44'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['D44'] = 2
+                ws['A40'] = '214108'
+                ws['B40'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                ws['C40'] = 2
 
             if nome_carreta.lower().find('p') != -1:
                 # Se tiver pneu dentro do código
-                ws['B45'] = 'Pneus'
-                ws['C45'] = 'PNEUS'
-                ws['D45'] = 6
+                ws['A41'] = 'Pneus'
+                ws['B41'] = 'PNEUS'
+                ws['C41'] = 4
 
             filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
 
@@ -193,69 +195,40 @@ if submit_button:
                     # Rodas
 
                     codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['B40'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['C40'] = codigos_descricao_roda
-                    ws['D40'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
+                    ws['A35'] = filtro_rodas_cilindros['RODA'][0]
+                    ws['B35'] = codigos_descricao_roda
+                    ws['C35'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
                 except:
-                    ws['B40'] = ''
-                    ws['C40'] = ''
-                    ws['D40'] = ''
+                    ws['A35'] = ''
+                    ws['B35'] = ''
+                    ws['C35'] = ''
 
                 try:
                     # Cilindros
                 
                     codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['B43'] = filtro_rodas_cilindros['CILINDRO'][0]
-                    ws['C43'] = codigos_descricao_cilindro
-                    ws['D43'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
+                    ws['A38'] = filtro_rodas_cilindros['CILINDRO'][0]
+                    ws['B38'] = codigos_descricao_cilindro
+                    ws['C38'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
                     
                 except:
-                    ws['B43'] = ''
-                    ws['C43'] = ''
-                    ws['D43'] = ''
+                    ws['A38'] = ''
+                    ws['B38'] = ''
+                    ws['C38'] = ''
 
                 # Tirante
-                ws['B46'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['C46'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['D46'] = 2
-                
+                ws['A42'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['B42'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['C42'] = 2
+
             j = 9
             for k in range(len(df_filtrado)):
                 print(' entrou K') 
-                ws['B' + str(j)] = df_filtrado['Recurso'][k] 
-                ws['C' + str(j)] = df_filtrado['Descrição'][k] 
-                ws['D' + str(j)] = df_filtrado['qnt'][k] 
+                ws['A' + str(j)] = df_filtrado['Recurso'][k] 
+                ws['B' + str(j)] = df_filtrado['Descrição'][k] 
+                ws['E' + str(j)] = df_filtrado['qnt'][k] 
                 j+=1
-            
-            vertical_offset = 10
-            
-            # Loop para adicionar caixas de seleção na faixa de células E9:G37
-            for row in ws.iter_rows(min_row=9, max_row=j-1, min_col=5, max_col=7):
-                for cell in row:
-                    # Adicionar uma caixa de seleção em cada célula
-                    
-                    checkbox = xlImage('empty-checkbox.png')
-                    checkbox.width = checkbox.height = 40  # Ajuste o tamanho da imagem conforme necessário
-                    ws.add_image(checkbox, cell.coordinate)  # Adiciona a imagem à célula
-                    
-            # Loop para adicionar caixas de seleção na faixa de células E39:G46
-            for row in ws.iter_rows(min_row=39, max_row=46, min_col=5, max_col=7):
-                for cell in row:
-                    # Adicionar uma caixa de seleção em cada célula
-                    
-                    checkbox = xlImage('empty-checkbox.png')
-                    checkbox.width = checkbox.height = 40  # Ajuste o tamanho da imagem conforme necessário
-                    ws.add_image(checkbox, cell.coordinate)  # Adiciona a imagem à célula
-            
-            # Loop para adicionar caixas de seleção na faixa de células E39:G46
-            for row in ws.iter_rows(min_row=6, max_row=16, min_col=13, max_col=13):
-                for cell in row:
-                    # Adicionar uma caixa de seleção em cada célula
-                    
-                    checkbox = xlImage('empty-checkbox.png')
-                    checkbox.width = checkbox.height = 40  # Ajuste o tamanho da imagem conforme necessário
-                    ws.add_image(checkbox, cell.coordinate)  # Adiciona a imagem à célula
-
+                        
             wb.template = False
             wb.save("Arquivo" + str(i) +'.xlsx') 
             my_file = "Arquivo" + str(i) +'.xlsx'
