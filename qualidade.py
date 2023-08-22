@@ -172,7 +172,7 @@ if submit_button:
                 ws['B36'] = 'BOMBA'
                 ws['C36'] = 1
                     
-            if nome_carreta.lower().find('rs/rd') != -1 or nome_carreta.lower().find('t') != -1:
+            if nome_carreta.lower().find('rs/rd') != -1:
                 
                 # Se tiver rs/rd dentro do código
                 ws['A40'] = '214108'
@@ -191,19 +191,7 @@ if submit_button:
                 ws['B41'] = 'PNEUS'
                 ws['C41'] = 6
 
-            elif nome_carreta.lower().find('t') != -1 and nome_carreta.lower().find('p') != -1:
-                
-                # Se tiver rs/rd dentro do código
-                ws['A40'] = '214108'
-                ws['B40'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['C40'] = 2
-
-                # Se tiver pneu dentro do código
-                ws['A41'] = 'Pneus'
-                ws['B41'] = 'PNEUS'
-                ws['C41'] = 6
-
-            elif nome_carreta.lower().find('p') != -1:
+            if not nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('p') != -1:
 
                 # Se tiver pneu dentro do código
                 ws['A41'] = 'Pneus'
