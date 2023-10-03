@@ -23,12 +23,6 @@ from PIL import Image as PILImage
 
 st.title('Checklist Qualidade')
 
-# st.write("Base para gerar as ordens de produção")
-# st.write("https://docs.google.com/spreadsheets/d/18ZXL8n47qSLFLVO5tBj7-ADpqmMyFwCgs4cxxtBB9Xo/edit#gid=0")
-
-# st.write("Planilha que guarda ordens geradas")
-# st.write("https://docs.google.com/spreadsheets/d/1IOgFhVTBtlHNBG899QqwlqxYlMcucTx74zRA29YBHKA/edit#gid=1228486917")
-
 name_sheet = 'RQ VE-001-001	(PLANILHA DE CARGAS)'
 name_sheet2 = 'Cópia de RQ CQ-011-000 (Checklist da Qualidade)'
 
@@ -60,13 +54,13 @@ importar_dados = pd.DataFrame(list1)
 dados = pd.DataFrame(list2[1:],columns=list2[0])
 checklist_qualidade = pd.DataFrame(list3)
 
-colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','240471','240474','240485','240640','240643','222416','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
+colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','240471','240474','240485','240640','240643','222416','034550','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
 
-rodas_cilindros = pd.DataFrame(list4).iloc[:,0:23]
+rodas_cilindros = pd.DataFrame(list4).iloc[:,0:24]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
 
-codigos_descricao = pd.DataFrame(list4).iloc[:,24:26]
+codigos_descricao = pd.DataFrame(list4).iloc[:,25:27]
 codigos_descricao = codigos_descricao.set_axis(colunas2,axis=1)
 codigos_descricao = codigos_descricao.dropna()
 
