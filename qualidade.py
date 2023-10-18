@@ -139,7 +139,7 @@ if submit_button:
         
         for i in range(len(dados_filtrados)):
             
-            nome_carreta  =  dados_filtrados['Recurso'][i]
+            nome_carreta = dados_filtrados['Recurso'][i]
 
             wb = Workbook()
             wb = load_workbook('modelo_op_carpintaria.xlsx')
@@ -173,7 +173,7 @@ if submit_button:
                 ws['B40'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
                 ws['C40'] = 2
 
-            if nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('p') != -1:
+            if nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
                 
                 # Se tiver rs/rd dentro do código
                 ws['A40'] = '214108'
@@ -185,7 +185,7 @@ if submit_button:
                 ws['B41'] = 'PNEUS'
                 ws['C41'] = 6
 
-            if not nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('p') != -1:
+            if not nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
 
                 # Se tiver pneu dentro do código
                 ws['A41'] = 'Pneus'
