@@ -54,13 +54,13 @@ importar_dados = pd.DataFrame(list1)
 dados = pd.DataFrame(list2[1:],columns=list2[0])
 checklist_qualidade = pd.DataFrame(list3)
 
-colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','240471','240474','240485','240640','240643','222416','034550','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
+colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679', '240471','240474','240485','240640','240643','222416','034550','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
 
-rodas_cilindros = pd.DataFrame(list4).iloc[:,0:25]
+rodas_cilindros = pd.DataFrame(list4).iloc[:,0:26]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
 
-codigos_descricao = pd.DataFrame(list4).iloc[:,26:28]
+codigos_descricao = pd.DataFrame(list4).iloc[:,27:29]
 codigos_descricao = codigos_descricao.set_axis(colunas2,axis=1)
 codigos_descricao = codigos_descricao.dropna()
 
