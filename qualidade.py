@@ -23,7 +23,7 @@ from PIL import Image as PILImage
 
 st.title('Checklist Qualidade')
 
-name_sheet = 'RQ AV-003-000 (PLANILHA DE CARGAS)'
+name_sheet = 'RQ AV-002-000 (PLANILHA DE CARGAS)'
 name_sheet2 = 'Cópia de RQ CQ-011-000 (Checklist da Qualidade)'
 
 worksheet1 = 'Importar Dados'
