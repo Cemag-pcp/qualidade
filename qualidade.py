@@ -54,13 +54,13 @@ importar_dados = pd.DataFrame(list1)
 dados = pd.DataFrame(list2[1:],columns=list2[0])
 checklist_qualidade = pd.DataFrame(list3)
 
-colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679', '240471','240474','240485','240640','240643','222416','034550','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
+colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679', '240471','240474','240485','240640','240643','222416','034550','034630','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
 
-rodas_cilindros = pd.DataFrame(list4).iloc[:,0:26]
+rodas_cilindros = pd.DataFrame(list4).iloc[:,0:27]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
 
-codigos_descricao = pd.DataFrame(list4).iloc[:,27:29]
+codigos_descricao = pd.DataFrame(list4).iloc[:,28:30]
 codigos_descricao = codigos_descricao.set_axis(colunas2,axis=1)
 codigos_descricao = codigos_descricao.dropna()
 
@@ -145,16 +145,16 @@ if submit_button:
             wb = load_workbook('modelo_op_carpintaria.xlsx')
             ws = wb.active
 
-            ws['B5'] = dados_filtrados['Recurso'][i] 
-            ws['A6'] = dados_filtrados['Descrição'][i] 
-            ws['G6'] = dados_filtrados['Pessoa'][i] #  data de hoje
-            ws['B7'] = dados_filtrados['Serie'][i]
-            ws['G7'] = dados_filtrados['Cidade/Estado'][i]
-            ws['E7']  = tipo_filtro  # data da carga
-            ws['E5'] = dados_filtrados['cor'][i]
-            ws['A42'] = 'ACESSÓRIOS 01'
-            ws['B42'] = 'ACESSÓRIOS'
-            ws['C42'] = 1
+            ws['B7'] = dados_filtrados['Recurso'][i] 
+            ws['A8'] = dados_filtrados['Descrição'][i] 
+            ws['G8'] = dados_filtrados['Pessoa'][i] #  data de hoje
+            ws['B9'] = dados_filtrados['Serie'][i]
+            ws['G9'] = dados_filtrados['Cidade/Estado'][i]
+            ws['E9']  = tipo_filtro  # data da carga
+            ws['E7'] = dados_filtrados['cor'][i]
+            ws['A44'] = 'ACESSÓRIOS 01'
+            ws['B44'] = 'ACESSÓRIOS'
+            ws['C44'] = 1
 
             df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
             df_filtrado = df_filtrado.reset_index(drop=True)
@@ -162,35 +162,35 @@ if submit_button:
             if nome_carreta.lower().find('bb') != -1:
                 
                 # Se tiver bomba dentro do código
-                ws['A36'] = '200391'
-                ws['B36'] = 'BOMBA'
-                ws['C36'] = 1
+                ws['A38'] = '200391'
+                ws['B38'] = 'BOMBA'
+                ws['C38'] = 1
                     
             if nome_carreta.lower().find('rs/rd') != -1:
                 
                 # Se tiver rs/rd dentro do código
-                ws['A40'] = '214108'
-                ws['B40'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['C40'] = 2
+                ws['A42'] = '214108'
+                ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                ws['C42'] = 2
 
             if nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
                 
                 # Se tiver rs/rd dentro do código
-                ws['A40'] = '214108'
-                ws['B40'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['C40'] = 2
+                ws['A42'] = '214108'
+                ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                ws['C42'] = 2
 
                 # Se tiver pneu dentro do código
-                ws['A41'] = 'Pneus'
-                ws['B41'] = 'PNEUS'
-                ws['C41'] = 6
+                ws['A43'] = 'Pneus'
+                ws['B43'] = 'PNEUS'
+                ws['C43'] = 6
 
             if not nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
 
                 # Se tiver pneu dentro do código
-                ws['A41'] = 'Pneus'
-                ws['B41'] = 'PNEUS'
-                ws['C41'] = 4
+                ws['A43'] = 'Pneus'
+                ws['B43'] = 'PNEUS'
+                ws['C43'] = 4
 
             filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
 
@@ -202,33 +202,33 @@ if submit_button:
                     # Rodas
 
                     codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A35'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['B35'] = codigos_descricao_roda
-                    ws['C35'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
+                    ws['A37'] = filtro_rodas_cilindros['RODA'][0]
+                    ws['B37'] = codigos_descricao_roda
+                    ws['C37'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
                 except:
-                    ws['A35'] = ''
-                    ws['B35'] = ''
-                    ws['C35'] = ''
+                    ws['A37'] = ''
+                    ws['B37'] = ''
+                    ws['C37'] = ''
 
                 try:
                     # Cilindros
                 
                     codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A38'] = filtro_rodas_cilindros['CILINDRO'][0]
-                    ws['B38'] = codigos_descricao_cilindro
-                    ws['C38'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
+                    ws['A40'] = filtro_rodas_cilindros['CILINDRO'][0]
+                    ws['B40'] = codigos_descricao_cilindro
+                    ws['C40'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
                     
                 except:
-                    ws['A38'] = ''
-                    ws['B38'] = ''
-                    ws['C38'] = ''
+                    ws['A40'] = ''
+                    ws['B40'] = ''
+                    ws['C40'] = ''
 
                 # Tirante
-                ws['A42'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['B42'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['C42'] = 2
+                ws['A44'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['B44'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['C44'] = 2
 
-            j = 9
+            j = 11
             for k in range(len(df_filtrado)):
                 print(' entrou K') 
                 ws['A' + str(j)] = df_filtrado['Recurso'][k] 
