@@ -18,7 +18,7 @@ from openpyxl.drawing.image import Image as xlImage
 from openpyxl.styles import Alignment
 from openpyxl.drawing.image import Image
 from PIL import Image as PILImage
-
+# data = '06/02/2024'
 ###### CONECTANDO PLANILHAS ##########
 
 st.title('Checklist Qualidade')
@@ -104,6 +104,8 @@ with st.form(key='my_form'):
         submit_button = st.form_submit_button(label='Gerar')
 
 if submit_button:
+
+        importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y").dt.strftime("%d/%m/%Y")
 
         dados_filtrados = importar_dados[importar_dados['Datas'] == tipo_filtro]
         dados_filtrados = dados_filtrados[dados_filtrados['Serie'].notnull() & (dados_filtrados['Serie'] != '')]
