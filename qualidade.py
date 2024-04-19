@@ -28,7 +28,7 @@ name_sheet2 = 'Cópia de RQ CQ-011-000 (Checklist da Qualidade)'
 
 worksheet1 = 'Importar Dados'
 worksheet2 = 'Dados'
-worksheet3 = 'Cópia de RQ CQ-011-000 (Checklist da Qualidade)'
+# worksheet3 = 'Cópia de RQ CQ-011-000 (Checklist da Qualidade)'
 worksheet4 = 'RODAS E CILINDROS'
 
 #filename = r"C:\Users\pcp2\ordem de producao\Ordem-de-producao\service_account.json"
@@ -40,27 +40,28 @@ sh2 = sa.open(name_sheet2)
 
 wks1 = sh.worksheet(worksheet1)
 wks2 = sh2.worksheet(worksheet2)
-wks3 = sh2.worksheet(worksheet3)
+# wks3 = sh2.worksheet(worksheet3)
 wks4 = sh2.worksheet(worksheet4)
 
 #obtendo todos os valores da planilha
 list1 = wks1.get()
 list2 = wks2.get()
-list3 = wks3.get()
+# list3 = wks3.get()
 list4 = wks4.get()
 
 #transformando em dataframe
 importar_dados = pd.DataFrame(list1)
 dados = pd.DataFrame(list2[1:],columns=list2[0])
-checklist_qualidade = pd.DataFrame(list3)
+# checklist_qualidade = pd.DataFrame(list3)
 
-colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679', '240471','240474','240485','240640','240643','222416','034550','034630','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
+colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679','035348','035390', '240471','240474','240485','240640','240643','222416','034550','034630','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
+len(colunas)
 
-rodas_cilindros = pd.DataFrame(list4).iloc[:,0:27]
+rodas_cilindros = pd.DataFrame(list4).iloc[:,0:29]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
 
-codigos_descricao = pd.DataFrame(list4).iloc[:,28:30]
+codigos_descricao = pd.DataFrame(list4).iloc[:,30:32]
 codigos_descricao = codigos_descricao.set_axis(colunas2,axis=1)
 codigos_descricao = codigos_descricao.dropna()
 
@@ -100,7 +101,7 @@ with st.form(key='my_form'):
         
         tipo_filtro = st.date_input('Data: ')
         tipo_filtro = tipo_filtro.strftime("%d/%m/%Y")
-        # tipo_filtro = "01/06/2023"
+        # tipo_filtro = "19/04/2024"
         submit_button = st.form_submit_button(label='Gerar')
 
 if submit_button:
@@ -142,6 +143,9 @@ if submit_button:
         for i in range(len(dados_filtrados)):
             
             nome_carreta = dados_filtrados['Recurso'][i]
+            descricao_carreta = dados_filtrados['Descrição'][i]
+
+            codigo_descricao = str(nome_carreta) + str(descricao_carreta)
 
             wb = Workbook()
             wb = load_workbook('modelo_op_carpintaria.xlsx')
@@ -161,21 +165,33 @@ if submit_button:
             df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
             df_filtrado = df_filtrado.reset_index(drop=True)
             
-            if nome_carreta.lower().find('bb') != -1:
+            if codigo_descricao.lower().find('bb') != -1:
                 
                 # Se tiver bomba dentro do código
                 ws['A38'] = '200391'
                 ws['B38'] = 'BOMBA'
                 ws['C38'] = 1
                     
-            if nome_carreta.lower().find('rs/rd') != -1:
+            if codigo_descricao.lower().find('rs/rd') != -1: 
                 
                 # Se tiver rs/rd dentro do código
                 ws['A42'] = '214108'
                 ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
                 ws['C42'] = 2
 
-            if nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
+            if codigo_descricao.lower().find('rs/rd') != -1 and codigo_descricao.lower().find('roda 20') != -1: 
+                
+                # Se tiver rs/rd dentro do código e aro 20
+                ws['A42'] = ''
+                ws['B42'] = ''
+                ws['C42'] = ''
+
+                ws['A41'] = '035390'
+                ws['B41'] = 'RODA RS R20 CINZA [CBH12/FT12500] Flag Romaneio'
+                ws['C41'] = 2
+
+
+            if codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
                 
                 # Se tiver rs/rd dentro do código
                 ws['A42'] = '214108'
@@ -187,7 +203,12 @@ if submit_button:
                 ws['B43'] = 'PNEUS'
                 ws['C43'] = 6
 
-            if not nome_carreta.lower().find('rs/rd') != -1 and nome_carreta.lower().find('(i)') != -1 or nome_carreta.lower().find('(r)') != -1:
+            if not codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
+
+                # Se tiver rs/rd dentro do código
+                # ws['A42'] = '214108'
+                # ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                # ws['C42'] = 2
 
                 # Se tiver pneu dentro do código
                 ws['A43'] = 'Pneus'
