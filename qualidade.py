@@ -101,7 +101,7 @@ with st.form(key='my_form'):
         
         tipo_filtro = st.date_input('Data: ')
         tipo_filtro = tipo_filtro.strftime("%d/%m/%Y")
-        # tipo_filtro = "19/04/2024"
+        # tipo_filtro = "22/04/2024"
         submit_button = st.form_submit_button(label='Gerar')
 
 if submit_button:
@@ -168,9 +168,9 @@ if submit_button:
             if codigo_descricao.lower().find('bb') != -1:
                 
                 # Se tiver bomba dentro do código
-                ws['A39'] = '200391'
-                ws['B39'] = 'BOMBA'
-                ws['C39'] = 1
+                ws['A47'] = '200391'
+                ws['B47'] = 'BOMBA'
+                ws['C47'] = 1
                     
             if codigo_descricao.lower().find('rs/rd') != -1: 
                 
@@ -225,26 +225,26 @@ if submit_button:
                     # Rodas
 
                     codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A38'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['B38'] = codigos_descricao_roda
-                    ws['C38'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
+                    ws['A49'] = filtro_rodas_cilindros['RODA'][0]
+                    ws['B49'] = codigos_descricao_roda
+                    ws['C49'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
                 except:
-                    ws['A38'] = ''
-                    ws['B38'] = ''
-                    ws['C38'] = ''
+                    ws['A49'] = ''
+                    ws['B49'] = ''
+                    ws['C49'] = ''
 
                 try:
                     # Cilindros
                 
                     codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A41'] = filtro_rodas_cilindros['CILINDRO'][0]
-                    ws['B41'] = codigos_descricao_cilindro
-                    ws['C41'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
+                    ws['A46'] = filtro_rodas_cilindros['CILINDRO'][0]
+                    ws['B46'] = codigos_descricao_cilindro
+                    ws['C46'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
                     
                 except:
-                    ws['A41'] = ''
-                    ws['B41'] = ''
-                    ws['C41'] = ''
+                    ws['A46'] = ''
+                    ws['B46'] = ''
+                    ws['C46'] = ''
 
                 # Tirante
                 ws['A45'] = 'TIRANTE DA TRAVA COMPLETO'
