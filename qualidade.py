@@ -156,7 +156,7 @@ if submit_button:
             ws['G8'] = dados_filtrados['Pessoa'][i] #  data de hoje
             ws['B9'] = dados_filtrados['Serie'][i]
             ws['G9'] = dados_filtrados['Cidade/Estado'][i]
-            ws['D9']  = tipo_filtro  # data da carga
+            ws['C9']  = tipo_filtro  # data da carga
             ws['F7'] = dados_filtrados['cor'][i]
             ws['A45'] = 'ACESSÓRIOS 01'
             ws['B45'] = 'ACESSÓRIOS'
