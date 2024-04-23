@@ -18,6 +18,7 @@ from openpyxl.drawing.image import Image as xlImage
 from openpyxl.styles import Alignment
 from openpyxl.drawing.image import Image
 from PIL import Image as PILImage
+
 # data = '06/02/2024'
 ###### CONECTANDO PLANILHAS ##########
 
@@ -101,7 +102,7 @@ with st.form(key='my_form'):
         
         tipo_filtro = st.date_input('Data: ')
         tipo_filtro = tipo_filtro.strftime("%d/%m/%Y")
-        # tipo_filtro = "22/04/2024"
+        # tipo_filtro = "23/04/2024"
         submit_button = st.form_submit_button(label='Gerar')
 
 if submit_button:
@@ -148,7 +149,7 @@ if submit_button:
             codigo_descricao = str(nome_carreta) + str(descricao_carreta)
 
             wb = Workbook()
-            wb = load_workbook('modelo_op_carpintaria3.xlsx')
+            wb = load_workbook('modelo_op_carpintaria1.xlsx')
             ws = wb.active
 
             ws['B7'] = dados_filtrados['Recurso'][i] 
