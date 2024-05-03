@@ -217,7 +217,7 @@ if submit_button:
                 ws['C44'] = 4
 
             #Tirante
-            if codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1: 
+            if codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
                 ws['A45'] = ''
                 ws['B45'] = ''
                 ws['C45'] = ''
