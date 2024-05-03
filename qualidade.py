@@ -159,9 +159,9 @@ if submit_button:
             ws['G9'] = dados_filtrados['Cidade/Estado'][i]
             ws['C9']  = tipo_filtro  # data da carga
             ws['F7'] = dados_filtrados['cor'][i]
-            ws['A45'] = 'ACESSÓRIOS 01'
-            ws['B45'] = 'ACESSÓRIOS'
-            ws['C45'] = 1
+            ws['A48'] = 'ACESSÓRIOS 01'
+            ws['B48'] = 'ACESSÓRIOS'
+            ws['C48'] = 1
 
             df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
             df_filtrado = df_filtrado.reset_index(drop=True)
@@ -216,6 +216,16 @@ if submit_button:
                 ws['B44'] = 'PNEUS'
                 ws['C44'] = 4
 
+            #Tirante
+            if codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1: 
+                ws['A45'] = ''
+                ws['B45'] = ''
+                ws['C45'] = ''
+            else:
+                ws['A45'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['B45'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['C45'] = 2
+
             filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
 
             if len(filtro_rodas_cilindros) > 0:
@@ -247,10 +257,7 @@ if submit_button:
                     ws['B46'] = ''
                     ws['C46'] = ''
 
-                # Tirante
-                ws['A45'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['B45'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['C45'] = 2
+                
 
             j = 12
             for k in range(len(df_filtrado)):
