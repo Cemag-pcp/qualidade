@@ -17,6 +17,7 @@ from PIL import Image
 from openpyxl.drawing.image import Image as xlImage
 from openpyxl.styles import Alignment
 from openpyxl.drawing.image import Image
+from google.oauth2 import service_account
 from PIL import Image as PILImage
 
 # data = '06/02/2024'
@@ -35,7 +36,14 @@ worksheet4 = 'RODAS E CILINDROS'
 #filename = r"C:\Users\pcp2\ordem de producao\Ordem-de-producao\service_account.json"
 filename = "service_account.json"
 
-sa = gspread.service_account(filename)
+service_account_info = st.secrets["GOOGLE_SERVICE_ACCOUNT"]
+
+scope = ['https://www.googleapis.com/auth/spreadsheets',
+         "https://www.googleapis.com/auth/drive"]
+
+credentials = service_account.Credentials.from_service_account_info(service_account_info, scopes=scope)
+
+sa = gspread.authorize(credentials)
 sh = sa.open(name_sheet)
 sh2 = sa.open(name_sheet2)
 
@@ -149,7 +157,8 @@ if submit_button:
             codigo_descricao = str(nome_carreta) + str(descricao_carreta)
 
             wb = Workbook()
-            wb = load_workbook('modelo_op_carpintaria1.xlsx')
+            # wb = load_workbook('modelo_op_carpintaria1.xlsx')
+            wb = load_workbook('modelo_expedicao_checklist2307.xlsx')
             ws = wb.active
 
             ws['B7'] = dados_filtrados['Recurso'][i] 
