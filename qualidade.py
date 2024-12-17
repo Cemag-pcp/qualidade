@@ -65,7 +65,6 @@ dados = pd.DataFrame(list2[1:],columns=list2[0])
 
 colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679','035348','035390', '240471','240474','240485','240640','240643','222416','034550','034630','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
-len(colunas)
 
 rodas_cilindros = pd.DataFrame(list4).iloc[:,0:29]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
@@ -168,9 +167,9 @@ if submit_button:
             ws['G9'] = dados_filtrados['Cidade/Estado'][i]
             ws['C9']  = tipo_filtro  # data da carga
             ws['F7'] = dados_filtrados['cor'][i]
-            ws['A33'] = 'ACESSÓRIOS 01'
-            ws['B33'] = 'ACESSÓRIOS'
-            ws['C33'] = 1
+            ws['A36'] = 'ACESSÓRIOS 01'
+            ws['B36'] = 'ACESSÓRIOS'
+            ws['F36'] = 1
 
             df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
             df_filtrado = df_filtrado.reset_index(drop=True)
@@ -180,60 +179,60 @@ if submit_button:
                 # Se tiver bomba dentro do código
                 ws['A32'] = '200391'
                 ws['B32'] = 'BOMBA'
-                ws['C32'] = 1
+                ws['F32'] = 1
                     
             if codigo_descricao.lower().find('rs/rd') != -1: 
                 
                 # Se tiver rs/rd dentro do código
-                ws['A28'] = '214108'
-                ws['B28'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['C28'] = 2
+                ws['A31'] = '214108'
+                ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                ws['F31'] = 2
 
             if codigo_descricao.lower().find('rs/rd') != -1 and codigo_descricao.lower().find('roda 20') != -1: 
                 
                 # Se tiver rs/rd dentro do código e aro 20
-                ws['A29'] = ''
-                ws['B29'] = ''
-                ws['C29'] = ''
+                ws['A32'] = ''
+                ws['B32'] = ''
+                ws['F32'] = ''
 
-                ws['A28'] = '035390'
-                ws['B28'] = 'RODA RS R20 CINZA [CBH12/FT12500] Flag Romaneio'
-                ws['C28'] = 2
+                ws['A31'] = '035390'
+                ws['B31'] = 'RODA RS R20 CINZA [CBH12/FT12500] Flag Romaneio'
+                ws['F31'] = 2
 
 
             if codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
                 
                 # Se tiver rs/rd dentro do código
-                ws['A28'] = '214108'
-                ws['B28'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['C28'] = 2
+                ws['A31'] = '214108'
+                ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+                ws['F31'] = 2
 
                 # Se tiver pneu dentro do código
-                ws['A29'] = 'Pneus'
-                ws['B29'] = 'PNEUS'
-                ws['C29'] = 6
+                ws['A32'] = 'Pneus'
+                ws['B32'] = 'PNEUS'
+                ws['F32'] = 6
 
             if not codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
 
                 # Se tiver rs/rd dentro do código
                 # ws['A42'] = '214108'
                 # ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                # ws['C42'] = 2
+                # ws['D42'] = 2
 
                 # Se tiver pneu dentro do código
-                ws['A29'] = 'Pneus'
-                ws['B29'] = 'PNEUS'
-                ws['C29'] = 4
+                ws['A32'] = 'Pneus'
+                ws['B32'] = 'PNEUS'
+                ws['F32'] = 4
 
             #Tirante
             if codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
-                ws['A30'] = ''
-                ws['B30'] = ''
-                ws['C30'] = ''
+                ws['A33'] = ''
+                ws['B33'] = ''
+                ws['F33'] = ''
             else:
-                ws['A30'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['B30'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['C30'] = 2
+                ws['A33'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['B33'] = 'TIRANTE DA TRAVA COMPLETO'
+                ws['F33'] = 2
 
             filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
 
@@ -245,28 +244,26 @@ if submit_button:
                     # Rodas
 
                     codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A34'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['B34'] = codigos_descricao_roda
-                    ws['C34'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
+                    ws['A37'] = filtro_rodas_cilindros['RODA'][0]
+                    ws['B37'] = codigos_descricao_roda
+                    ws['F37'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
                 except:
-                    ws['A34'] = ''
-                    ws['B34'] = ''
-                    ws['C34'] = ''
+                    ws['A37'] = ''
+                    ws['B37'] = ''
+                    ws['F37'] = ''
 
                 try:
                     # Cilindros
                 
                     codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A31'] = filtro_rodas_cilindros['CILINDRO'][0]
-                    ws['B31'] = codigos_descricao_cilindro
-                    ws['C31'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
+                    ws['A34'] = filtro_rodas_cilindros['CILINDRO'][0]
+                    ws['B34'] = codigos_descricao_cilindro
+                    ws['F34'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
                     
                 except:
-                    ws['A31'] = ''
-                    ws['B31'] = ''
-                    ws['C31'] = ''
-
-                
+                    ws['A34'] = ''
+                    ws['B34'] = ''
+                    ws['F34'] = ''
 
             j = 12
             for k in range(len(df_filtrado)):
