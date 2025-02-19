@@ -63,13 +63,13 @@ importar_dados = pd.DataFrame(list1)
 dados = pd.DataFrame(list2[1:],columns=list2[0])
 # checklist_qualidade = pd.DataFrame(list3)
 
-colunas = ['carreta','CÓDIGO','descrição','214105','214107','214104','214108','033703','034478','033516','214114','262728','034149','035003','225679','035348','035390', '240471','240474','240485','240640','240643','222416','034550','034630','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
+colunas = ['carreta','CÓDIGO','descrição','214105','214104','214107','214108','268502','033703','034478','033516','214114','262728','034149','035003','225679','035348','035390','036048','240471','240474','240485','240640','240643','222416','036117','034550','034630','034830','RODA','QUANTIDADE1','CILINDRO','QUANTIDADE2']
 colunas2 = ['codigo','descricao']
 
-rodas_cilindros = pd.DataFrame(list4).iloc[:,0:29]
+rodas_cilindros = pd.DataFrame(list4).iloc[:,0:33]
 rodas_cilindros = rodas_cilindros.set_axis(colunas,axis=1)
 
-codigos_descricao = pd.DataFrame(list4).iloc[:,30:32]
+codigos_descricao = pd.DataFrame(list4).iloc[:,29:31]
 codigos_descricao = codigos_descricao.set_axis(colunas2,axis=1)
 codigos_descricao = codigos_descricao.dropna()
 
@@ -109,7 +109,7 @@ with st.form(key='my_form'):
         
         tipo_filtro = st.date_input('Data: ')
         tipo_filtro = tipo_filtro.strftime("%d/%m/%Y")
-        # tipo_filtro = "23/04/2024"
+        # tipo_filtro = "17/02/2025"
         submit_button = st.form_submit_button(label='Gerar')
 
 if submit_button:
@@ -225,7 +225,7 @@ if submit_button:
                 ws['F32'] = 4
 
             #Tirante
-            if codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
+            if codigo_descricao.lower().find('roçax') != -1 or codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
                 ws['A33'] = ''
                 ws['B33'] = ''
                 ws['F33'] = ''
@@ -245,7 +245,7 @@ if submit_button:
 
                     codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
                     ws['A37'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['B37'] = codigos_descricao_roda
+                    ws['B37'] = '' #sem descrição
                     ws['F37'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
                 except:
                     ws['A37'] = ''
