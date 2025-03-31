@@ -114,7 +114,9 @@ with st.form(key='my_form'):
 
 if submit_button:
 
-        importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y").dt.strftime("%d/%m/%Y")
+        # importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y").dt.strftime("%d/%m/%Y")
+        importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y", errors='coerce')
+        importar_dados['Datas'] = importar_dados['Datas'].dt.strftime("%d/%m/%Y")
 
         dados_filtrados = importar_dados[importar_dados['Datas'] == tipo_filtro]
         dados_filtrados = dados_filtrados[dados_filtrados['Serie'].notnull() & (dados_filtrados['Serie'] != '')]
