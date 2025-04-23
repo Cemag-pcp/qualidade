@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #94c2f3;
+            --primary-dark: #8b9197;
+            --primary-light: #c5ddf9;
+            --primary-bg: #eef5ff;
+            --secondary-color: #f3c4fb;
+            --secondary-dark: #e0a5e8;
+            --secondary-light: #f9e0ff;
+            --success-color: #a8e6cf;
+            --success-dark: #7dcfb6;
+            --success-light: #d8f3ea;
+            --danger-color: #ffd3b6;
+            --danger-dark: #ffb88c;
+            --danger-light: #ffe8d6;
+            --warning-color: #fdffb6;
+            --warning-dark: #f9f871;
+            --warning-light: #feffdf;
+            --info-color: #d3b5e5;
+            --info-dark: #b28dce;
+            --info-light: #efe5f7;
+            --light-color: #f8f9fa;
+            --dark-color: #495057;
+            --text-color: #5a5a5a;
+            --text-light: #7a7a7a;
+            --border-radius: 1rem;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f7fe;
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(148, 194, 243, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(168, 230, 207, 0.07) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(211, 181, 229, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
+        }
+        
+        /* .container-fluid {
+            max-width: 1400px;
+            padding: 1.5rem;
+        } */
+        
+        .card {
+            border: none;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background-color: #ffffff;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            border-bottom: 0;
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.75rem;
+        }
+        
+        .btn {
+            border-radius: 0.75rem;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #4a5568;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: #2d3748;
+        }
+        
+        .btn-success:hover {
+            background-color: var(--success-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #2d3748;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .btn-light {
+            background-color: #ffffff;
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-light);
+        }
+        
+        .btn-light:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+            color: #4a5568;
+        }
+        
+        .btn-info:hover {
+            background-color: var(--info-dark);
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .form-control, .form-select {
+            padding: 0.65rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            color: var(--text-color);
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(148, 194, 243, 0.25);
+            background-color: #ffffff;
+        }
+        
+        .input-group-text {
+            border-radius: 0.75rem 0 0 0.75rem;
+            background-color: var(--primary-light);
+            border: 1px solid #e2e8f0;
+            color: var(--primary-dark);
+        }
+        
+        .input-group .form-control {
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+        
+        .table {
+            vertical-align: middle;
+            color: var(--text-color);
+        }
+        
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.03);
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: rgba(148, 194, 243, 0.05);
+        }
+        
+        .table-hover > tbody > tr:hover > * {
+            background-color: rgba(148, 194, 243, 0.1);
+        }
+        
+        .table-dark {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+        }
+        
+        .table-dark th {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .actions-column {
+            width: 120px;
+        }
+        
+        .search-results {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            background-color: #fff;
+        }
+        
+        .search-item {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.2s ease;
+        }
+        
+        .search-item:hover {
+            background-color: rgba(148, 194, 243, 0.1);
+        }
+        
+        .search-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Estilização da barra de rolagem */
+        .search-results::-webkit-scrollbar,
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .search-results::-webkit-scrollbar-track,
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .search-results::-webkit-scrollbar-thumb,
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+        
+        .search-results::-webkit-scrollbar-thumb:hover,
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+        
+        /* Cabeçalho da página */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            color: var(--dark-color);
+            padding: 2.5rem 0;
+            margin-bottom: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .page-header .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Estilos para os modais */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            border-bottom: 0;
+            padding: 1.5rem 1.75rem;
+        }
+        
+        .modal-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--dark-color);
+        }
+        
+        .modal-header.bg-success {
+            background-color: var(--success-color) !important;
+            color: var(--dark-color);
+        }
+        
+        .modal-header.bg-danger {
+            background-color: var(--danger-color) !important;
+            color: var(--dark-color);
+        }
+        
+        .modal-header.bg-info {
+            background-color: var(--info-color) !important;
+            color: var(--dark-color);
+        }
+        
+        .modal-body {
+            padding: 1.75rem;
+        }
+        
+        .modal-footer {
+            border-top: 0;
+            padding: 1.5rem 1.75rem;
+        }
+        
+        /* Estilos para o formulário */
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .border-bottom.border-2 {
+            border-color: rgba(148, 194, 243, 0.3) !important;
+        }
+        
+        /* Ícones nos botões */
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Badges e status */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        
+        .badge-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .badge-success {
+            background-color: var(--success-color);
+            color: #2d3748;
+        }
+        
+        /* Elementos decorativos */
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+        
+        .icon-circle:hover {
+            transform: scale(1.05);
+        }
+        
+        .icon-circle-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .icon-circle-success {
+            background-color: var(--success-color);
+            color: #2d3748;
+        }
+        
+        .icon-circle-danger {
+            background-color: var(--danger-color);
+            color: #2d3748;
+        }
+        
+        .icon-circle-info {
+            background-color: var(--info-light);
+            color: var(--info-dark);
+        }
+        
+        /* Botões de ação na tabela */
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .action-btn-edit {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .action-btn-edit:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn-delete {
+            background-color: var(--danger-color);
+            color: #e53e3e;
+        }
+        
+        .action-btn-delete:hover {
+            background-color: var(--danger-dark);
+            transform: translateY(-2px);
+        }
+        
+        /* Decorações adicionais */
+        .card-decoration {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.5;
+            z-index: 0;
+        }
+        
+        .decoration-top-right {
+            top: -75px;
+            right: -75px;
+        }
+        
+        .decoration-bottom-left {
+            bottom: -75px;
+            left: -75px;
+            background: linear-gradient(135deg, var(--success-light) 0%, transparent 70%);
+        }
+        
+        /* Estatísticas e resumos */
+        .stats-card {
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            background-color: #ffffff;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .stats-success {
+            background-color: var(--success-light);
+            color: var(--success-dark);
+        }
+        
+        .stats-danger {
+            background-color: var(--danger-light);
+            color: var(--danger-dark);
+        }
+        
+        .stats-info {
+            background-color: var(--info-light);
+            color: var(--info-dark);
+        }
+        
+        .stats-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+        }
+        
+        .stats-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        /* Alertas estilizados */
+        .alert {
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+        }
+        
+        .alert-info {
+            background-color: var(--info-light);
+            color: var(--info-dark);
+        }
+        
+        .alert-success {
+            background-color: var(--success-light);
+            color: var(--success-dark);
+        }
+        
+        .alert-warning {
+            background-color: var(--warning-light);
+            color: var(--warning-dark);
+        }
+        
+        .alert-danger {
+            background-color: var(--danger-light);
+            color: var(--danger-dark);
+        }
+        
+        /* Navegação de abas */
+        .nav-tabs {
+            border-bottom: 2px solid var(--primary-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--text-light);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: var(--transition);
+            margin-right: 0.25rem;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-dark);
+            background-color: var(--primary-bg);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-dark);
+            background-color: var(--primary-light);
+            border-bottom: 3px solid var(--primary-dark);
+        }
+        
+        /* Tooltips personalizados */
+        .custom-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .custom-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .custom-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container-fluid">
+        <!-- Cabeçalho da página -->
+        <div class="page-header text-center mb-4">
+            <div class="container position-relative">
+                <h1 class="display-5 fw-bold">Gerador de Checklist - Qualidade</h1>
+                <p class="lead">Sistema de gerenciamento e controle de qualidade</p>
+                
+                <!-- Decoração do cabeçalho -->
+                <div class="position-absolute top-0 end-0 mt-3 me-3">
+                    <div class="icon-circle icon-circle-primary">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estatísticas Rápidas -->
+        <!-- <div class="row mb-4 g-3 fade-in">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon stats-primary">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div class="stats-value">124</div>
+                    <div class="stats-label">Carretas Cadastradas</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon stats-success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stats-value">87</div>
+                    <div class="stats-label">Checklists Concluídos</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon stats-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="stats-value">12</div>
+                    <div class="stats-label">Itens Pendentes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon stats-info">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="stats-value">35</div>
+                    <div class="stats-label">Relatórios Gerados</div>
+                </div>
+            </div>
+        </div> -->
+        
+        <!-- Formulário de Data e Botão Gerar -->
+        <div class="card mb-4 fade-in position-relative">
+            <div class="card-decoration decoration-top-right"></div>
+            <div class="card-header bg-primary text-dark d-flex align-items-center">
+                <i class="bi bi-calendar-check me-2 fs-5"></i>
+                <h5 class="mb-0">Gerar Relatório</h5>
+            </div>
+            <div class="card-body position-relative">
+                <form id="generateForm" class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label for="reportDate" class="form-label">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            Data do Relatório
+                        </label>
+                        <input type="date" class="form-control" id="reportDate" required>
+                    </div>
+                    <div class="col-md-6 d-flex gap-2">
+                        <button type="button" class="btn btn-success" id="generateButton">
+                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        </button>
+                        <button type="button" class="btn btn-info" id="bulkInsertButton">
+                            <i class="bi bi-cloud-upload"></i> Inserir dados em massa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Navegação por abas -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="data-tab" data-bs-toggle="tab" data-bs-target="#data-tab-pane" type="button" role="tab" aria-controls="data-tab-pane" aria-selected="true">
+                    <i class="bi bi-table me-1"></i> Dados
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Conteúdo das abas -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Aba de Dados -->
+            <div class="tab-pane fade show active" id="data-tab-pane" role="tabpanel" aria-labelledby="data-tab" tabindex="0">
+                <!-- Gerenciamento de Dados -->
+                <div class="card fade-in position-relative">
+                    <div class="card-decoration decoration-bottom-left"></div>
+                    <div class="card-header bg-primary text-dark d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-database-fill me-2 fs-5"></i>
+                            <h5 class="mb-0">Gerenciamento de Dados</h5>
+                        </div>
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="prepareModalForAdd()">
+                            <i class="bi bi-plus-circle"></i> Novo Registro
+                        </button>
+                    </div>
+                    <div class="card-body position-relative">
+                        <!-- Filtro de Pesquisa -->
+                        <div class="row mb-4 g-3">
+                            <div class="col-md-3">
+                                <label for="filtroCarreta" class="form-label">Carreta</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-truck"></i></span>
+                                    <input id="filtroCarreta" class="form-control" placeholder="Filtrar por carreta">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filtroCodigo" class="form-label">Código</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                                    <input id="filtroCodigo" class="form-control" placeholder="Filtrar por código">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filtroTipo" class="form-label">Tipo</label>
+                                <select id="filtroTipo" class="form-select">
+                                    <option value="">— Todos os tipos —</option>
+                                    <option value="roda">Roda</option>
+                                    <option value="cilindro">Cilindro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button id="searchButton" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de Dados -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Carreta</th>
+                                        <th>Código</th>
+                                        <th>Desc</th>
+                                        <th>Código</th>
+                                        <th>Qt</th>
+                                        <th>Descrição do item</th>
+                                        <th>Tipo</th>
+                                        <th class="actions-column text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <!-- Os dados serão inseridos aqui via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Gráficos -->
+            <div class="tab-pane fade" id="charts-tab-pane" role="tabpanel" aria-labelledby="charts-tab" tabindex="0">
+                <div class="card">
+                    <div class="card-header bg-primary text-dark">
+                        <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i> Visualização de Dados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Os gráficos serão exibidos quando houver dados disponíveis.
+                        </div>
+                        
+                        <div class="text-center py-5">
+                            <div class="icon-circle icon-circle-primary mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                                <i class="bi bi-bar-chart"></i>
+                            </div>
+                            <h4>Sem dados para visualizar</h4>
+                            <p class="text-muted">Adicione registros para gerar gráficos e estatísticas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Configurações -->
+            <div class="tab-pane fade" id="settings-tab-pane" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+                <div class="card">
+                    <div class="card-header bg-primary text-dark">
+                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i> Configurações do Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-person me-2"></i> Perfil de Usuário</h5>
+                                        <p class="card-text text-muted">Configure suas preferências de usuário e notificações.</p>
+                                        <button class="btn btn-sm btn-primary">Editar Perfil</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-bell me-2"></i> Notificações</h5>
+                                        <p class="card-text text-muted">Gerencie suas preferências de notificações e alertas.</p>
+                                        <button class="btn btn-sm btn-primary">Configurar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-shield-lock me-2"></i> Segurança</h5>
+                                        <p class="card-text text-muted">Altere sua senha e configure opções de segurança.</p>
+                                        <button class="btn btn-sm btn-primary">Gerenciar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-palette me-2"></i> Aparência</h5>
+                                        <p class="card-text text-muted">Personalize a aparência e o tema do sistema.</p>
+                                        <button class="btn btn-sm btn-primary">Personalizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Adicionar/Editar Registro -->
+    <div class="modal fade" id="addEditModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="modalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        <span>Adicionar Novo Registro</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recordForm" class="p-2 bg-white rounded">
+                        <input type="hidden" id="recordId">
+            
+                        <!-- Seção da Carreta -->
+                        <div class="mb-4">
+                            <div class="border-bottom border-2 mb-3 pb-2">
+                                <h4 class="text-primary d-flex align-items-center">
+                                    <i class="bi bi-truck me-2"></i>
+                                    Informações da Carreta
+                                </h4>
+                            </div>
+            
+                            <div class="row mb-3 g-3">
+                                <div class="col-md-6">
+                                    <label for="carreta" class="form-label fw-bold">
+                                        <i class="bi bi-tag me-1"></i>
+                                        Carreta:
+                                    </label>
+                                    <input type="text" class="form-control" id="carreta" placeholder="Digite para ver sugestões" autocomplete="off" required>
+                                    <div class="search-results" id="searchResults">
+                                        <div id="resultsList"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="codigo" class="form-label fw-bold">
+                                        <i class="bi bi-upc me-1"></i>
+                                        Código carreta
+                                    </label>
+                                    <input type="text" class="form-control" id="codigo" autocomplete="off" required>
+                                </div>
+                            </div>
+            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="desc" class="form-label fw-bold">
+                                        <i class="bi bi-card-text me-1"></i>
+                                        Descrição
+                                    </label>
+                                    <textarea class="form-control" id="desc" rows="3" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Seção do Item -->
+                        <div class="mb-4">
+                            <div class="border-bottom border-2 mb-3 pb-2">
+                                <h4 class="text-primary d-flex align-items-center">
+                                    <i class="bi bi-box me-2"></i>
+                                    Informações do Item
+                                </h4>
+                            </div>
+            
+                            <div class="row mb-3 g-3">
+                                <div class="col-md-4">
+                                    <label for="itemCode" class="form-label fw-bold">
+                                        <i class="bi bi-upc-scan me-1"></i>
+                                        Código
+                                    </label>
+                                    <input type="text" class="form-control" id="itemCode" autocomplete="off" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="qt" class="form-label fw-bold">
+                                        <i class="bi bi-123 me-1"></i>
+                                        Quantidade
+                                    </label>
+                                    <input type="number" class="form-control" id="qt" autocomplete="off" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipo" class="form-label fw-bold">
+                                        <i class="bi bi-list-check me-1"></i>
+                                        Tipo
+                                    </label>
+                                    <select class="form-select" id="tipo" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="roda">Roda</option>
+                                        <option value="cilindro">Cilindro</option>
+                                    </select>
+                                </div>
+                            </div>
+            
+                            <div class="mb-3">
+                                <label for="itemDescription" class="form-label fw-bold">
+                                    <i class="bi bi-card-text me-1"></i>
+                                    Descrição do item
+                                </label>
+                                <textarea class="form-control" id="itemDescription" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelSaveButton" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveButton">
+                        <i class="bi bi-check-circle"></i>
+                        <span id="saveButtonText">Salvar</span>
+                        <span id="saveButtonLoading" class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle icon-circle-danger">
+                            <i class="bi bi-trash"></i>
+                        </div>
+                        <p class="mb-0 fs-5">Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelDeleteButton" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">
+                        <i class="bi bi-trash"></i>
+                        <span id="deleteButtonText">Excluir</span>
+                        <span id="deleteButtonLoading" class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Geração de Relatório -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title" id="reportModalLabel">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Relatório Gerado
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle icon-circle-success">
+                            <i class="bi bi-file-earmark-check"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Relatório gerado com sucesso!</h6>
+                            <p class="mb-0">Data: <span id="reportDateDisplay" class="fw-bold"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelDownloadReportButton" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Fechar
+                    </button>
+                    <button type="button" class="btn btn-success" id="downloadReportButton">
+                        <i class="bi bi-check-circle"></i>
+                        <span id="saveDownloadText"><i class="bi bi-download"></i> Gerar</span>
+                        <span id="saveDownloadReportButton" class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Inserção em Massa -->
+    <div class="modal fade" id="bulkInsertModal" tabindex="-1" aria-labelledby="bulkInsertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title" id="bulkInsertModalLabel">
+                        <i class="bi bi-cloud-upload me-2"></i>
+                        Inserir Dados em Massa
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-circle icon-circle-info">
+                                <i class="bi bi-file-earmark-excel"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Carregue um arquivo em Excel</h6>
+                                <p class="mb-0 text-muted">O arquivo deve seguir o modelo padrão do sistema</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="bulkFile" class="form-label">Selecione o arquivo</label>
+                            <input class="form-control" type="file" id="bulkFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            <div id="bulkImportFeedback" class="mt-3"></div>
+                        </div>
+                        
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <div>
+                                Você pode baixar um modelo de planilha
+                                <a href="/api/planilha-modelo" class="alert-link" download>clicando aqui</a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-info" id="confirmBulkInsertButton">
+                        <i class="bi bi-cloud-upload"></i>
+                        <span>Processar Arquivo</span>
+                        <span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/tabela-dados.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/input-list.js') }}"></script>
+    
+    <!-- Script para o botão de inserção em massa -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar o botão de inserção em massa para abrir o modal
+            const bulkInsertButton = document.getElementById('bulkInsertButton');
+            if (bulkInsertButton) {
+                bulkInsertButton.addEventListener('click', function() {
+                    const bulkInsertModal = new bootstrap.Modal(document.getElementById('bulkInsertModal'));
+                    bulkInsertModal.show();
+                });
+            }
+            
+            // Inicializar tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+
+</body>
+</html>

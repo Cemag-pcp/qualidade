@@ -114,181 +114,184 @@ with st.form(key='my_form'):
 
 if submit_button:
 
-        # importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y").dt.strftime("%d/%m/%Y")
-        importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y", errors='coerce')
-        importar_dados['Datas'] = importar_dados['Datas'].dt.strftime("%d/%m/%Y")
+    # importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y").dt.strftime("%d/%m/%Y")
+    importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y", errors='coerce')
+    importar_dados['Datas'] = importar_dados['Datas'].dt.strftime("%d/%m/%Y")
 
-        dados_filtrados = importar_dados[importar_dados['Datas'] == tipo_filtro]
-        dados_filtrados = dados_filtrados[dados_filtrados['Serie'].notnull() & (dados_filtrados['Serie'] != '')]
-        dados_filtrados.reset_index(drop=True,inplace=True)
+    dados_filtrados = importar_dados[importar_dados['Datas'] == tipo_filtro]
+    dados_filtrados = dados_filtrados[dados_filtrados['Serie'].notnull() & (dados_filtrados['Serie'] != '')]
+    dados_filtrados.reset_index(drop=True,inplace=True)
 
-        df_dados = dados.copy()
+    df_dados = dados.copy()
 
-        dados_filtrados['cor'] = ''
+    dados_filtrados['cor'] = ''
 
-        df_cores = pd.DataFrame({'Recurso_cor':['AN','VJ','LC','VM','AV','sem_cor'], 
-            'cor':['Azul','Verde','Laranja','Vermelho','Amarelo','Laranja']})
+    df_cores = pd.DataFrame({'Recurso_cor':['AN','VJ','LC','VM','AV','sem_cor'], 
+        'cor':['Azul','Verde','Laranja','Vermelho','Amarelo','Laranja']})
 
-        for i in range(len(dados_filtrados)):
-            
-            inicio = len(dados_filtrados['Recurso'][i])-2
-            fim = len(dados_filtrados['Recurso'][i])
-
-            dados_filtrados['cor'][i] = dados_filtrados['Recurso'][i][inicio:fim]
-            
-            df_cores_filtrada = df_cores[df_cores['Recurso_cor'] == dados_filtrados['cor'][i]].reset_index(drop=True)
-
-            if len(df_cores_filtrada) == 0:
-                dados_filtrados['cor'][i] = 'Laranja'
-            else:
-                cor = df_cores_filtrada['cor'][0]
-                dados_filtrados['cor'][i] = cor 
-
-        dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' AN','') # Azul
-        dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' VJ','') # Verde
-        dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' LC','') # Laranja
-        dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' VM','') # Vermelho
-        dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' AV','') # Amarelo
+    for i in range(len(dados_filtrados)):
         
-        for i in range(len(dados_filtrados)):
+        inicio = len(dados_filtrados['Recurso'][i])-2
+        fim = len(dados_filtrados['Recurso'][i])
+
+        dados_filtrados['cor'][i] = dados_filtrados['Recurso'][i][inicio:fim]
+        
+        df_cores_filtrada = df_cores[df_cores['Recurso_cor'] == dados_filtrados['cor'][i]].reset_index(drop=True)
+
+        if len(df_cores_filtrada) == 0:
+            dados_filtrados['cor'][i] = 'Laranja'
+        else:
+            cor = df_cores_filtrada['cor'][0]
+            dados_filtrados['cor'][i] = cor 
+
+    dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' AN','') # Azul
+    dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' VJ','') # Verde
+    dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' LC','') # Laranja
+    dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' VM','') # Vermelho
+    dados_filtrados['Recurso']=dados_filtrados['Recurso'].str.replace(' AV','') # Amarelo
+    
+    for i in range(len(dados_filtrados)):
+        
+        nome_carreta = dados_filtrados['Recurso'][i]
+        descricao_carreta = dados_filtrados['Descrição'][i]
+
+        codigo_descricao = str(nome_carreta) + str(descricao_carreta)
+
+        wb = Workbook()
+        # wb = load_workbook('modelo_op_carpintaria1.xlsx')
+        wb = load_workbook('modelo_expedicao_checklist2307.xlsx')
+        ws = wb.active
+
+        ws['B7'] = dados_filtrados['Recurso'][i] 
+        ws['A8'] = dados_filtrados['Descrição'][i] 
+        ws['G8'] = dados_filtrados['Pessoa'][i] #  data de hoje
+        ws['B9'] = dados_filtrados['Serie'][i]
+        ws['G9'] = dados_filtrados['Cidade/Estado'][i]
+        ws['C9']  = tipo_filtro  # data da carga
+        ws['F7'] = dados_filtrados['cor'][i]
+        ws['A36'] = 'ACESSÓRIOS 01'
+        ws['B36'] = 'ACESSÓRIOS'
+        ws['F36'] = 1
+
+        df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
+        df_filtrado = df_filtrado.reset_index(drop=True)
+        
+        if codigo_descricao.lower().find('bb') != -1:
             
-            nome_carreta = dados_filtrados['Recurso'][i]
-            descricao_carreta = dados_filtrados['Descrição'][i]
-
-            codigo_descricao = str(nome_carreta) + str(descricao_carreta)
-
-            wb = Workbook()
-            # wb = load_workbook('modelo_op_carpintaria1.xlsx')
-            wb = load_workbook('modelo_expedicao_checklist2307.xlsx')
-            ws = wb.active
-
-            ws['B7'] = dados_filtrados['Recurso'][i] 
-            ws['A8'] = dados_filtrados['Descrição'][i] 
-            ws['G8'] = dados_filtrados['Pessoa'][i] #  data de hoje
-            ws['B9'] = dados_filtrados['Serie'][i]
-            ws['G9'] = dados_filtrados['Cidade/Estado'][i]
-            ws['C9']  = tipo_filtro  # data da carga
-            ws['F7'] = dados_filtrados['cor'][i]
-            ws['A36'] = 'ACESSÓRIOS 01'
-            ws['B36'] = 'ACESSÓRIOS'
-            ws['F36'] = 1
-
-            df_filtrado = df_dados[df_dados['REF PRINCIPAL'] == nome_carreta]
-            df_filtrado = df_filtrado.reset_index(drop=True)
+            # Se tiver bomba dentro do código
+            ws['A32'] = '200391'
+            ws['B32'] = 'BOMBA'
+            ws['F32'] = 1
+                
+        if codigo_descricao.lower().find('rs/rd') != -1: 
             
-            if codigo_descricao.lower().find('bb') != -1:
+            # Se tiver rs/rd dentro do código
+            ws['A31'] = '214108'
+            ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+            ws['F31'] = 2
+
+        if codigo_descricao.lower().find('rs/rd') != -1 and codigo_descricao.lower().find('roda 20') != -1: 
+            
+            # Se tiver rs/rd dentro do código e aro 20
+            ws['A32'] = ''
+            ws['B32'] = ''
+            ws['F32'] = ''
+
+            ws['A31'] = '035390'
+            ws['B31'] = 'RODA RS R20 CINZA [CBH12/FT12500] Flag Romaneio'
+            ws['F31'] = 2
+
+        if codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
+            
+            # Se tiver rs/rd dentro do código
+            ws['A31'] = '214108'
+            ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+            ws['F31'] = 2
+
+            # Se tiver pneu dentro do código
+            ws['A32'] = 'Pneus'
+            ws['B32'] = 'PNEUS'
+            ws['F32'] = 6
+
+        if not codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
+
+            # Se tiver rs/rd dentro do código
+            # ws['A42'] = '214108'
+            # ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
+            # ws['D42'] = 2
+
+            # Se tiver pneu dentro do código
+            ws['A32'] = 'Pneus'
+            ws['B32'] = 'PNEUS'
+            ws['F32'] = 4
+
+        #Tirante
+        if codigo_descricao.lower().find('roçax') != -1 or codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
+            ws['A33'] = ''
+            ws['B33'] = ''
+            ws['F33'] = ''
+        else:
+            ws['A33'] = 'TIRANTE DA TRAVA COMPLETO'
+            ws['B33'] = 'TIRANTE DA TRAVA COMPLETO'
+            ws['F33'] = 2
+
+        filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
+
+        if len(filtro_rodas_cilindros) > 0:
+            # Verificação se existe roda/cilindo para essa carreta
+            filtro_rodas_cilindros.reset_index(inplace=True, drop=True)
+            
+            try:
+                # Rodas
+
+                codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
+                ws['A37'] = filtro_rodas_cilindros['RODA'][0]
+                ws['B37'] = '' #sem descrição
+                ws['F37'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
+            except:
+                ws['A37'] = ''
+                ws['B37'] = ''
+                ws['F37'] = ''
+
+            try:
+                # Cilindros
+            
+                codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
+                ws['A34'] = filtro_rodas_cilindros['CILINDRO'][0]
+                ws['B34'] = codigos_descricao_cilindro
+                ws['F34'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
                 
-                # Se tiver bomba dentro do código
-                ws['A32'] = '200391'
-                ws['B32'] = 'BOMBA'
-                ws['F32'] = 1
+            except:
+                ws['A34'] = ''
+                ws['B34'] = ''
+                ws['F34'] = ''
+
+        j = 12
+        for k in range(len(df_filtrado)):
+        
+            if j >= 29:
+                ws.insert_rows(j)  # insere nova linha antes de usar a linha j
+
+            ws['A' + str(j)] = df_filtrado['Recurso'][k] 
+            ws['B' + str(j)] = df_filtrado['Descrição'][k] 
+            ws['C' + str(j)] = df_filtrado['qnt'][k] 
+            j+=1
                     
-            if codigo_descricao.lower().find('rs/rd') != -1: 
-                
-                # Se tiver rs/rd dentro do código
-                ws['A31'] = '214108'
-                ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['F31'] = 2
+        wb.template = False
+        wb.save("Arquivo" + str(i) +'.xlsx') 
+        my_file = "Arquivo" + str(i) +'.xlsx'
+        filenames.append(my_file)
 
-            if codigo_descricao.lower().find('rs/rd') != -1 and codigo_descricao.lower().find('roda 20') != -1: 
-                
-                # Se tiver rs/rd dentro do código e aro 20
-                ws['A32'] = ''
-                ws['B32'] = ''
-                ws['F32'] = ''
+    filenames_unique = list(set(filenames))
 
-                ws['A31'] = '035390'
-                ws['B31'] = 'RODA RS R20 CINZA [CBH12/FT12500] Flag Romaneio'
-                ws['F31'] = 2
+    with zipfile.ZipFile("Arquivos.zip", mode="w") as archive:
+        for filename in filenames_unique:
+            archive.write(filename)
 
-
-            if codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
-                
-                # Se tiver rs/rd dentro do código
-                ws['A31'] = '214108'
-                ws['B31'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                ws['F31'] = 2
-
-                # Se tiver pneu dentro do código
-                ws['A32'] = 'Pneus'
-                ws['B32'] = 'PNEUS'
-                ws['F32'] = 6
-
-            if not codigo_descricao.lower().find('rs/rd') != -1 and (codigo_descricao.lower().find('(i)') != -1 or codigo_descricao.lower().find('(r)') != -1):
-
-                # Se tiver rs/rd dentro do código
-                # ws['A42'] = '214108'
-                # ws['B42'] = 'RODA 6 FUROS TANDEM FA6 Flag Romaneio'
-                # ws['D42'] = 2
-
-                # Se tiver pneu dentro do código
-                ws['A32'] = 'Pneus'
-                ws['B32'] = 'PNEUS'
-                ws['F32'] = 4
-
-            #Tirante
-            if codigo_descricao.lower().find('roçax') != -1 or codigo_descricao.lower().find('f6') != -1 or codigo_descricao.lower().find('f4') != -1 or codigo_descricao.lower().find('fa5') != -1 or codigo_descricao.lower().find('ftc4300') != -1 or codigo_descricao.lower().find('ftc6500') != -1 or codigo_descricao.lower().find('ftc10500') != -1: 
-                ws['A33'] = ''
-                ws['B33'] = ''
-                ws['F33'] = ''
-            else:
-                ws['A33'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['B33'] = 'TIRANTE DA TRAVA COMPLETO'
-                ws['F33'] = 2
-
-            filtro_rodas_cilindros = rodas_cilindros[rodas_cilindros['carreta'] == nome_carreta]
-
-            if len(filtro_rodas_cilindros) > 0:
-                # Verificação se existe roda/cilindo para essa carreta
-                filtro_rodas_cilindros.reset_index(inplace=True, drop=True)
-                
-                try:
-                    # Rodas
-
-                    codigos_descricao_roda = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['RODA'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A37'] = filtro_rodas_cilindros['RODA'][0]
-                    ws['B37'] = '' #sem descrição
-                    ws['F37'] = filtro_rodas_cilindros['QUANTIDADE1'][0]
-                except:
-                    ws['A37'] = ''
-                    ws['B37'] = ''
-                    ws['F37'] = ''
-
-                try:
-                    # Cilindros
-                
-                    codigos_descricao_cilindro = codigos_descricao[codigos_descricao['codigo'] == filtro_rodas_cilindros['CILINDRO'][0]].reset_index(drop=True)['descricao'][0]
-                    ws['A34'] = filtro_rodas_cilindros['CILINDRO'][0]
-                    ws['B34'] = codigos_descricao_cilindro
-                    ws['F34'] = filtro_rodas_cilindros['QUANTIDADE2'][0]
-                    
-                except:
-                    ws['A34'] = ''
-                    ws['B34'] = ''
-                    ws['F34'] = ''
-
-            j = 12
-            for k in range(len(df_filtrado)):
-                ws['A' + str(j)] = df_filtrado['Recurso'][k] 
-                ws['B' + str(j)] = df_filtrado['Descrição'][k] 
-                ws['C' + str(j)] = df_filtrado['qnt'][k] 
-                j+=1
-                        
-            wb.template = False
-            wb.save("Arquivo" + str(i) +'.xlsx') 
-            my_file = "Arquivo" + str(i) +'.xlsx'
-            filenames.append(my_file)
-
-        filenames_unique = list(set(filenames))
-
-        with zipfile.ZipFile("Arquivos.zip", mode="w") as archive:
-            for filename in filenames_unique:
-                archive.write(filename)
-
-        with open("Arquivos.zip", "rb") as fp:
-            btn = st.download_button(
-                label="Download arquivos",
-                data=fp,
-                file_name="Arquivos.zip",
-                mime="application/zip"
-            )
+    with open("Arquivos.zip", "rb") as fp:
+        btn = st.download_button(
+            label="Download arquivos",
+            data=fp,
+            file_name="Arquivos.zip",
+            mime="application/zip"
+        )
