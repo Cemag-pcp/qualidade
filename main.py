@@ -17,7 +17,7 @@ checklist = Blueprint('checklist', __name__)
 def extrair_cor(texto):
     """
     Procura a primeira sigla de cor em 'texto' e devolve a cor correspondente.
-    Se não encontrar, devolve 'sem_cor'.
+    Se não encontrar, devolve 'Laranja'.
     """
 
     df_cores = pd.DataFrame({'Recurso_cor':['AN','VJ','LC','VM','AV','sem_cor'], 
@@ -27,7 +27,7 @@ def extrair_cor(texto):
     padrao = re.compile(r'(' + '|'.join(map_cor.keys()) + r')', flags=re.I)
 
     m = padrao.search(str(texto))
-    return map_cor.get(m.group(1).upper(), 'sem_cor') if m else 'sem_cor'
+    return map_cor.get(m.group(1).upper(), 'Laranja') if m else 'Laranja'
 
 def remove_sigla_cor(texto: str) -> str:
     """Remove AN, VJ, LC, VM, AV (case‑insensitive) de 'texto'."""
