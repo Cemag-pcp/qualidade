@@ -333,7 +333,9 @@ function gerarModelo(dataCarga) {
             carretas.forEach(carreta => {
                 const url = new URL("/modelo", window.location.origin);
                 url.searchParams.set("dataCarga", dataCarga);
-                url.searchParams.set("recurso", carreta);
+                url.searchParams.set("recurso", carreta[0]);
+                url.searchParams.set("serie", carreta[1]);
+                
                 window.open(url.toString(), "_blank");
             });
 
