@@ -106,7 +106,7 @@ def listar_items():
 def item_unico(item_id):
     return jsonify(Item.query.get_or_404(item_id).as_dict())
 
-@checklist.route("/index")
+@checklist.route("/")
 def index():
 
     return render_template("index.html")
