@@ -38,7 +38,7 @@ def remove_sigla_cor(texto: str) -> str:
     # elimina espaços duplos que sobrarem e tira espaços nas pontas
     return re.sub(r'\s{2,}', ' ', sem_sigla).strip()
 
-def planilha_cargas(data_carga):
+def planilha_cargas(data_carga="2025-04-24"):
     
     data_carga = datetime.strptime(data_carga, "%Y-%m-%d").strftime("%d/%m/%Y")
 
@@ -226,7 +226,7 @@ def gerar_modelo():
 def listar_carretas():
     data_carga = request.args.get("dataCarga")
     df = planilha_cargas(data_carga)
-    carretas = df['Recurso'].dropna().drop_duplicates().tolist()
+    carretas = df['Recurso'].dropna().tolist()
     return jsonify(carretas=carretas)
 
 @checklist.route("/api/listar-carretas")
