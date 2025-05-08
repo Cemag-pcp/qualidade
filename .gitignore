@@ -1,3 +1,4 @@
 .streamlit
 service_account.json
 credentials.json
+instance/items.db

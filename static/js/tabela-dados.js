@@ -350,6 +350,34 @@ function gerarModelo(dataCarga) {
         });
 }
 
+document.getElementById("resetCacheButton").addEventListener("click", function () {
+    const dateInput = document.getElementById("reportDate");
+    const data = dateInput.value;
+
+    if (!data) {
+        alert("Por favor, selecione uma data antes de resetar o cache.");
+        return;
+    }
+
+    const url = `/planilha-cargas?data=${encodeURIComponent(data)}&reset=true`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erro ao resetar o cache.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Cache resetado com sucesso!");
+            console.log("Resposta da API:", data);
+        })
+        .catch(error => {
+            console.error("Erro:", error);
+            alert("Falha ao resetar o cache.");
+        });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     
     buscarItens()

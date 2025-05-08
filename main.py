@@ -13,6 +13,7 @@ import re
 import numpy as np
 
 checklist = Blueprint('checklist', __name__)
+planilha_cargas_cache = {}
 
 def extrair_cor(texto):
     """
@@ -38,38 +39,40 @@ def remove_sigla_cor(texto: str) -> str:
     # elimina espaços duplos que sobrarem e tira espaços nas pontas
     return re.sub(r'\s{2,}', ' ', sem_sigla).strip()
 
-def planilha_cargas(data_carga="2025-04-22"):
-    
-    data_carga = datetime.strptime(data_carga, "%Y-%m-%d").strftime("%d/%m/%Y")
+def planilha_cargas(data_carga, reset_cache=False):
+    global planilha_cargas_cache
 
-    scope = ['https://www.googleapis.com/auth/spreadsheets',
-         "https://www.googleapis.com/auth/drive"]
+    if not reset_cache and data_carga in planilha_cargas_cache:
+        return planilha_cargas_cache[data_carga]
 
+    # Conversão e carregamento dos dados
+    data_carga_formatada = datetime.strptime(data_carga, "%Y-%m-%d").strftime("%d/%m/%Y")
+
+    scope = ['https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive"]
     credentials = service_account.Credentials.from_service_account_file('credentials.json', scopes=scope)
 
     name_sheet = 'RQ AV-002-000 (PLANILHA DE CARGAS)'
-
     sa = gspread.authorize(credentials)
     sh = sa.open(name_sheet)
-
-    worksheet1 = 'Importar Dados'
-    wks1 = sh.worksheet(worksheet1)
+    wks1 = sh.worksheet('Importar Dados')
 
     list1 = wks1.get()
     importar_dados = pd.DataFrame(list1)
     importar_dados = importar_dados[[1,3,6,9,10,11,13]]
-    importar_dados = importar_dados.rename(columns={1:'Estado',3:'Cidade',6: 'Datas',9:'Pessoa',10:'Recurso',11:'Descrição',13:'Serie'})
+    importar_dados.columns = ['Estado','Cidade','Datas','Pessoa','Recurso','Descrição','Serie']
+    importar_dados = importar_dados[1:]  # remove header
     importar_dados['Cidade/Estado'] = importar_dados['Cidade'] + '/' + importar_dados['Estado']
     importar_dados.drop(columns=['Estado', 'Cidade'], inplace=True)
-    importar_dados = importar_dados[1:]
-    importar_dados = importar_dados[importar_dados['Datas'].notnull() & (importar_dados['Datas'] != '')]
 
+    importar_dados = importar_dados[importar_dados['Datas'].notnull() & (importar_dados['Datas'] != '')]
     importar_dados['Datas'] = pd.to_datetime(importar_dados['Datas'], format="%d/%m/%Y", errors='coerce')
     importar_dados['Datas'] = importar_dados['Datas'].dt.strftime("%d/%m/%Y")
-    
-    dados_filtrados = importar_dados[importar_dados['Datas'] == data_carga]
 
+    dados_filtrados = importar_dados[importar_dados['Datas'] == data_carga_formatada]
     dados_filtrados['cor'] = dados_filtrados['Recurso'].apply(extrair_cor)
+
+    # salva no cache
+    planilha_cargas_cache[data_carga] = dados_filtrados
 
     return dados_filtrados
 
@@ -88,6 +91,20 @@ def create_app():
     app.register_blueprint(checklist)
                            
     return app
+
+@checklist.route("/planilha-cargas", methods=["GET"])
+def rota_planilha_cargas():
+    data_carga = request.args.get("data")
+    reset = request.args.get("reset", "false").lower() == "true"
+
+    if not data_carga:
+        return jsonify({"error": "Parâmetro 'data' é obrigatório."}), 400
+
+    try:
+        df = planilha_cargas(data_carga, reset_cache=reset)
+        return df.to_json(orient="records", force_ascii=False)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @checklist.route("/api/items")
 def listar_items():
@@ -133,7 +150,7 @@ def get_dados_por_recurso(df_rc, model):
 @checklist.route("/modelo")
 def gerar_modelo():
     data_carga = request.args.get("dataCarga")
-    recurso     = request.args.get("recurso")
+    recurso     = request.args.get("recurso").rstrip()
     serie     = request.args.get("serie")
 
     df = planilha_cargas(data_carga)
