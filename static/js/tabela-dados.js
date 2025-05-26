@@ -327,27 +327,27 @@ function gerarModelo(dataCarga) {
     setGenerateReport(true);
 
     fetch(`/api/carretas?dataCarga=${encodeURIComponent(dataCarga)}`)
-        .then(r => r.json())
-        .then(json => {
-            const carretas = json.carretas || [];
-            carretas.forEach(carreta => {
-                const url = new URL("/modelo", window.location.origin);
-                url.searchParams.set("dataCarga", dataCarga);
-                url.searchParams.set("recurso", carreta[0]);
-                url.searchParams.set("serie", carreta[1]);
-                
-                window.open(url.toString(), "_blank");
-            });
-
-            const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-            modal.hide();
-        })
-        .catch(err => {
-            console.error("Erro ao gerar modelo:", err);
-        })
-        .finally(() => {
-            setGenerateReport(false);
+    .then(r => r.json())
+    .then(json => {
+        const carretas = json.carretas || [];
+        carretas.forEach(carreta => {
+            const url = new URL("/modelo", window.location.origin);
+            url.searchParams.set("dataCarga", dataCarga);
+            url.searchParams.set("recurso", carreta[0]);
+            url.searchParams.set("serie", carreta[1]);
+            
+            window.open(url.toString(), "_blank");
         });
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+        modal.hide();
+    })
+    .catch(err => {
+        console.error("Erro ao gerar modelo:", err);
+    })
+    .finally(() => {
+        setGenerateReport(false);
+    });
 }
 
 document.getElementById("resetCacheButton").addEventListener("click", function () {
