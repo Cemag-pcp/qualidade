@@ -339,6 +339,9 @@ function gerarModelo(dataCarga) {
             window.open(url.toString(), "_blank");
         });
 
+        // Gerar e baixar PDFs
+        gerarPDFs(dataCarga, carretas);
+
         const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
         modal.hide();
     })
@@ -348,6 +351,54 @@ function gerarModelo(dataCarga) {
     .finally(() => {
         setGenerateReport(false);
     });
+}
+
+async function gerarPDFs(dataCarga, carretas) {
+    try {
+        // Opção 1: Gerar PDFs individuais
+        // for (const carreta of carretas) {
+        //     await baixarPDFIndividual(dataCarga, carreta[0], carreta[1]);
+        // }
+
+        // Opção 2: Gerar ZIP com todos os PDFs (descomente se preferir)
+        await baixarZipPDFs(dataCarga, carretas);
+        
+    } catch (error) {
+        console.error("Erro ao gerar PDFs:", error);
+        alert("Erro ao gerar os PDFs. Tente novamente.");
+    }
+}
+
+async function baixarZipPDFs(dataCarga, carretas) {
+    try {
+        const response = await fetch('/api/gerar-pdfs-zip', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                dataCarga: dataCarga,
+                carretas: carretas
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `checklists_${dataCarga}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+    } catch (error) {
+        console.error("Erro ao baixar ZIP dos PDFs:", error);
+    }
 }
 
 document.getElementById("resetCacheButton").addEventListener("click", function () {
