@@ -57,6 +57,7 @@ def planilha_cargas(data_carga, reset_cache=False):
     credentials = service_account.Credentials.from_service_account_file('credentials.json', scopes=scope)
 
     name_sheet = 'RQ AV-002-000 (PLANILHA DE CARGAS)'
+    # name_sheet = 'Cópia de RQ AV-002-000 (PLANILHA DE CARGAS) - 24 de setembro, 12:00'
     sa = gspread.authorize(credentials)
     sh = sa.open(name_sheet)
     wks1 = sh.worksheet('Importar Dados')
@@ -160,6 +161,7 @@ def gerar_modelo():
 
     df = planilha_cargas(data_carga)
     df = df[df['Serie'] == serie]
+    df['Recurso'] = df['Recurso'].str.rstrip()
 
     # filtra só pela carreta pedida
     df_rc = (
@@ -180,12 +182,12 @@ def gerar_modelo():
             "qt": 1
         })
 
-    if 'rs/rd' in recurso.lower():
-        acessorios_extras.append({
-            "codigo": "214108",
-            "descricao": "RODA 6 FUROS TANDEM FA6 Flag Romaneio",
-            "qt": 2
-        })
+    # if 'rs/rd' in recurso.lower():
+    #     acessorios_extras.append({
+    #         "codigo": "214108",
+    #         "descricao": "RODA 6 FUROS TANDEM FA6 Flag Romaneio",
+    #         "qt": 2
+    #     })
 
     if recurso.lower().find('rs/rd') != -1 and recurso.lower().find('roda 20') != -1: 
         
@@ -199,11 +201,11 @@ def gerar_modelo():
     if recurso.lower().find('rs/rd') != -1 and (recurso.lower().find('(i)') != -1 or recurso.lower().find('(r)') != -1):
         
         # Se tiver rs/rd dentro do código
-        acessorios_extras.append({
-            "codigo": "214108",
-            "descricao": "RODA 6 FUROS TANDEM FA6 Flag Romaneio",
-            "qt": 2
-        })
+        # acessorios_extras.append({
+        #     "codigo": "214108",
+        #     "descricao": "RODA 6 FUROS TANDEM FA6 Flag Romaneio",
+        #     "qt": 2
+        # })
         # Se tiver pneu dentro do código
         acessorios_extras.append({
             "codigo": "Pneus",
@@ -249,7 +251,13 @@ def gerar_modelo():
 def listar_carretas():
     data_carga = request.args.get("dataCarga")
     df = planilha_cargas(data_carga)
+
+    df['Recurso'] = df['Recurso'].str.strip()
+
     carretas = df[['Recurso', 'Serie']].dropna(subset=['Recurso', 'Serie']).drop_duplicates().values.tolist()
+    
+    print(carretas)
+    
     return jsonify(carretas=carretas)
 
 @checklist.route("/api/listar-carretas")
@@ -331,10 +339,10 @@ def adicionar_item():
         return jsonify({"error": "Todos os campos são obrigatórios!"}), 400
 
     item = Item(
-        carreta=data["carreta"],
-        codigo=data["codigo"],
+        carreta=data["carreta"].strip(''),
+        codigo=data["codigo"].strip(''),
         desc=data["desc"],
-        item_code=data["itemCode"],
+        item_code=data["itemCode"].strip(),
         qt=data["qt"],
         item_description=data["itemDescription"],
         tipo=data["tipo"]
@@ -454,7 +462,7 @@ def importar_recurso():
 
 def gerar_pdf_da_carreta(args):
     data_carga, recurso, serie = args
-    modelo_url = f"http://192.168.3.3:8083/modelo?dataCarga={data_carga}&recurso={recurso}&serie={serie}"
+    modelo_url = f"http://192.168.3.140:8083/modelo?dataCarga={data_carga}&recurso={recurso}&serie={serie}"
 
     options = {
         'page-size': 'A4',
