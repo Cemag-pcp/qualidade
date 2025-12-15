@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos cadastrados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #94c2f3;
+            --primary-dark: #8b9197;
+            --primary-light: #c5ddf9;
+            --primary-bg: #eef5ff;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --radius: 18px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f9fc;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(148, 194, 243, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 10%, rgba(243, 196, 251, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 60% 80%, rgba(168, 230, 207, 0.08) 0%, transparent 25%);
+        }
+
+        .page-header {
+            margin: 30px 0;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            color: #34495e;
+        }
+
+        .card {
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header {
+            border-bottom: 0;
+            background: linear-gradient(120deg, var(--primary-color), var(--primary-light));
+            color: #2d3748;
+            font-weight: 600;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background-color: #fbfbfb;
+        }
+
+        .btn {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .table thead th {
+            background-color: #eef5ff;
+            color: #2d3748;
+            border-bottom: 0;
+        }
+
+        .badge-pill {
+            border-radius: 999px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center page-header">
+            <div>
+                <p class="text-muted mb-1">Base de dados</p>
+                <h1 class="mb-0">Recursos cadastrados</h1>
+            </div>
+            <div class="d-flex gap-2">
+                <button id="newRecursoButton" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Novo recurso
+                </button>
+                <a class="btn btn-outline-secondary" href="/">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                <button id="refreshButton" class="btn btn-primary">
+                    <i class="bi bi-arrow-clockwise"></i> Atualizar
+                </button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-funnel me-2"></i>Filtros
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Carreta</label>
+                        <input id="filtroCarretaRecurso" class="form-control" placeholder="Ex.: CBHM4500">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Recurso</label>
+                        <input id="filtroRecurso" class="form-control" placeholder="Ex.: LC 4500">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button id="btnFiltrar" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                        <button id="btnLimpar" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-eraser"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-collection me-2"></i>Lista de recursos</span>
+                <span id="contador" class="badge bg-light text-dark badge-pill"></span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Carreta</th>
+                                <th>Descricao carreta</th>
+                                <th>Recurso</th>
+                                <th>Descricao recurso</th>
+                                <th class="text-end">Qt</th>
+                                <th class="text-center">Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recursosTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <div class="small mt-2">Carregando...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="text-center text-muted" style="display: none;">
+                    <i class="bi bi-inboxes fs-1 d-block mb-2"></i>
+                    Nenhum recurso encontrado com os filtros atuais.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de cadastro/edicao -->
+    <div class="modal fade" id="recursoModal" tabindex="-1" aria-labelledby="recursoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recursoModalLabel">Novo recurso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recursoForm" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Carreta</label>
+                            <input id="carretaInput" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Recurso</label>
+                            <input id="recursoInput" class="form-control" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Descricao da carreta</label>
+                            <textarea id="descCarretaInput" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Descricao do recurso</label>
+                            <textarea id="descRecursoInput" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Quantidade</label>
+                            <input type="number" step="0.01" min="0" id="qtInput" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveRecursoButton">
+                        <span id="saveRecursoText">Salvar</span>
+                        <span id="saveRecursoLoading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de exclusao -->
+    <div class="modal fade" id="deleteRecursoModal" tabindex="-1" aria-labelledby="deleteRecursoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteRecursoModalLabel">Confirmar exclusao</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja excluir este recurso?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteRecursoButton">
+                        <span id="deleteRecursoText">Excluir</span>
+                        <span id="deleteRecursoLoading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tbody = document.getElementById('recursosTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const counter = document.getElementById('contador');
+
+        let recursosData = [];
+        let currentId = null;
+        let isEditing = false;
+
+        const recursoModal = new bootstrap.Modal(document.getElementById('recursoModal'));
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteRecursoModal'));
+
+        function setLoading() {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="small mt-2">Carregando...</div>
+                    </td>
+                </tr>`;
+        }
+
+        function renderRows(lista = recursosData) {
+            tbody.innerHTML = '';
+            if (!lista.length) {
+                emptyState.style.display = 'block';
+                counter.textContent = '0 registros';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            counter.textContent = `${lista.length} registro${lista.length > 1 ? 's' : ''}`;
+
+            lista.forEach(recurso => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${recurso.carreta || '-'}</td>
+                    <td>${recurso.desc_carreta || '-'}</td>
+                    <td>${recurso.recurso || '-'}</td>
+                    <td>${recurso.descricao_recurso || '-'}</td>
+                    <td class="text-end">${recurso.qt ?? '-'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="abrirEdicao(${recurso.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="abrirExclusao(${recurso.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function setSaveLoading(flag) {
+            document.getElementById('saveRecursoButton').disabled = flag;
+            document.getElementById('saveRecursoLoading').style.display = flag ? 'inline-block' : 'none';
+            document.getElementById('saveRecursoText').textContent = flag ? 'Salvando...' : 'Salvar';
+        }
+
+        function setDeleteLoading(flag) {
+            document.getElementById('confirmDeleteRecursoButton').disabled = flag;
+            document.getElementById('deleteRecursoLoading').style.display = flag ? 'inline-block' : 'none';
+            document.getElementById('deleteRecursoText').textContent = flag ? 'Excluindo...' : 'Excluir';
+        }
+
+        function limparFormulario() {
+            document.getElementById('recursoForm').reset();
+        }
+
+        function abrirNovo() {
+            limparFormulario();
+            isEditing = false;
+            currentId = null;
+            document.getElementById('recursoModalLabel').textContent = 'Novo recurso';
+            recursoModal.show();
+        }
+
+        function abrirEdicao(id) {
+            const rec = recursosData.find(r => r.id === id);
+            if (!rec) return;
+            isEditing = true;
+            currentId = id;
+            document.getElementById('recursoModalLabel').textContent = 'Editar recurso';
+            document.getElementById('carretaInput').value = rec.carreta || '';
+            document.getElementById('recursoInput').value = rec.recurso || '';
+            document.getElementById('descCarretaInput').value = rec.desc_carreta || '';
+            document.getElementById('descRecursoInput').value = rec.descricao_recurso || '';
+            document.getElementById('qtInput').value = rec.qt ?? '';
+            recursoModal.show();
+        }
+
+        function abrirExclusao(id) {
+            currentId = id;
+            deleteModal.show();
+        }
+
+        async function salvarRecurso() {
+            const payload = {
+                carreta: document.getElementById('carretaInput').value.trim(),
+                recurso: document.getElementById('recursoInput').value.trim(),
+                desc_carreta: document.getElementById('descCarretaInput').value.trim(),
+                descricao_recurso: document.getElementById('descRecursoInput').value.trim(),
+                qt: document.getElementById('qtInput').value
+            };
+
+            if (Object.values(payload).some(v => v === '')) {
+                alert('Preencha todos os campos.');
+                return;
+            }
+
+            const url = isEditing ? `/api/recurso/${currentId}` : '/api/recurso';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                setSaveLoading(true);
+                const resp = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await resp.json();
+                if (!resp.ok) {
+                    alert(data.error || 'Erro ao salvar recurso.');
+                    setSaveLoading(false);
+                    return;
+                }
+
+                if (isEditing) {
+                    const idx = recursosData.findIndex(r => r.id === currentId);
+                    if (idx !== -1) recursosData[idx] = data;
+                } else {
+                    recursosData.push(data);
+                }
+
+                renderRows();
+                recursoModal.hide();
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao salvar recurso.');
+            } finally {
+                setSaveLoading(false);
+            }
+        }
+
+        async function confirmarExclusao() {
+            if (!currentId) return;
+            try {
+                setDeleteLoading(true);
+                const resp = await fetch(`/api/recurso/${currentId}`, { method: 'DELETE' });
+                if (!resp.ok) {
+                    const data = await resp.json();
+                    alert(data.error || 'Erro ao excluir.');
+                    setDeleteLoading(false);
+                    return;
+                }
+                recursosData = recursosData.filter(r => r.id !== currentId);
+                renderRows();
+                deleteModal.hide();
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao excluir recurso.');
+            } finally {
+                setDeleteLoading(false);
+            }
+        }
+
+        async function carregarRecursos() {
+            setLoading();
+            const params = new URLSearchParams();
+            const carreta = document.getElementById('filtroCarretaRecurso').value.trim();
+            const recurso = document.getElementById('filtroRecurso').value.trim();
+
+            if (carreta) params.append('carreta', carreta);
+            if (recurso) params.append('recurso', recurso);
+
+            const url = params.toString() ? `/api/recursos?${params.toString()}` : '/api/recursos';
+
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error('Erro ao buscar recursos');
+                const data = await resp.json();
+                recursosData = Array.isArray(data) ? data : [];
+                renderRows();
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger py-4">
+                            <i class="bi bi-x-circle me-1"></i> Nao foi possivel carregar os recursos.
+                        </td>
+                    </tr>`;
+                counter.textContent = '';
+                console.error(err);
+            }
+        }
+
+        document.getElementById('btnFiltrar').addEventListener('click', carregarRecursos);
+        document.getElementById('btnLimpar').addEventListener('click', () => {
+            document.getElementById('filtroCarretaRecurso').value = '';
+            document.getElementById('filtroRecurso').value = '';
+            carregarRecursos();
+        });
+        document.getElementById('refreshButton').addEventListener('click', carregarRecursos);
+        document.getElementById('newRecursoButton').addEventListener('click', abrirNovo);
+        document.getElementById('saveRecursoButton').addEventListener('click', salvarRecurso);
+        document.getElementById('confirmDeleteRecursoButton').addEventListener('click', confirmarExclusao);
+
+        ['filtroCarretaRecurso', 'filtroRecurso'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    carregarRecursos();
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', carregarRecursos);
+    </script>
+</body>
+</html>

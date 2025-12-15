@@ -119,6 +119,87 @@ def listar_items():
     itens = query.order_by(Item.id).all()
     return jsonify([i.as_dict() for i in itens])
 
+@checklist.route("/api/recursos")
+def listar_recursos():
+    """
+    Retorna os registros da tabela Recurso permitindo filtros basicos.
+    """
+    query = Recurso.query
+
+    for campo in ("carreta", "recurso"):
+        if valor := request.args.get(campo):
+            query = query.filter(getattr(Recurso, campo).ilike(f"%{valor}%"))
+
+    recursos = query.order_by(Recurso.id).all()
+    return jsonify([r.as_dict() for r in recursos])
+
+@checklist.route("/api/recurso", methods=["POST"])
+def adicionar_recurso():
+    data = request.get_json()
+
+    required = ("carreta", "desc_carreta", "recurso", "descricao_recurso", "qt")
+    if not data or any(not str(data.get(campo, "")).strip() for campo in required):
+        return jsonify({"error": "Todos os campos sao obrigatorios."}), 400
+
+    existente = (
+        Recurso.query
+        .filter(and_(Recurso.carreta == data["carreta"], Recurso.recurso == data["recurso"]))
+        .first()
+    )
+    if existente:
+        return jsonify({"error": "Recurso ja cadastrado para essa carreta."}), 400
+
+    recurso = Recurso(
+        carreta=str(data["carreta"]).strip(),
+        desc_carreta=str(data["desc_carreta"]).strip(),
+        recurso=str(data["recurso"]).strip(),
+        descricao_recurso=str(data["descricao_recurso"]).strip(),
+        qt=float(data["qt"])
+    )
+
+    db.session.add(recurso)
+    db.session.commit()
+
+    return jsonify(recurso.as_dict()), 201
+
+@checklist.route("/api/recurso/<int:recurso_id>", methods=["PUT"])
+def editar_recurso(recurso_id):
+    data = request.get_json()
+
+    required = ("carreta", "desc_carreta", "recurso", "descricao_recurso", "qt")
+    if not data or any(not str(data.get(campo, "")).strip() for campo in required):
+        return jsonify({"error": "Todos os campos sao obrigatorios."}), 400
+
+    recurso = Recurso.query.get_or_404(recurso_id)
+
+    duplicado = (
+        Recurso.query
+        .filter(
+            Recurso.carreta == data["carreta"],
+            Recurso.recurso == data["recurso"],
+            Recurso.id != recurso_id,
+        )
+        .first()
+    )
+    if duplicado:
+        return jsonify({"error": "Ja existe outro recurso com essa combinacao."}), 400
+
+    recurso.carreta = str(data["carreta"]).strip()
+    recurso.desc_carreta = str(data["desc_carreta"]).strip()
+    recurso.recurso = str(data["recurso"]).strip()
+    recurso.descricao_recurso = str(data["descricao_recurso"]).strip()
+    recurso.qt = float(data["qt"])
+
+    db.session.commit()
+    return jsonify(recurso.as_dict())
+
+@checklist.route("/api/recurso/<int:recurso_id>", methods=["DELETE"])
+def deletar_recurso(recurso_id):
+    recurso = Recurso.query.get_or_404(recurso_id)
+    db.session.delete(recurso)
+    db.session.commit()
+    return jsonify({"success": True})
+
 @checklist.route("/api/items/<int:item_id>")
 def item_unico(item_id):
     return jsonify(Item.query.get_or_404(item_id).as_dict())
@@ -127,6 +208,13 @@ def item_unico(item_id):
 def index():
 
     return render_template("index.html")
+
+@checklist.route("/recursos")
+def recursos_page():
+    """
+    Tela simples para visualizar recursos cadastrados.
+    """
+    return render_template("recursos.html")
 
 def get_dados_por_recurso(df_rc, model):
     resultado = []
