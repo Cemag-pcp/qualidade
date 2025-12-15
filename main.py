@@ -11,9 +11,14 @@ import pandas as pd
 from datetime import datetime
 import re
 import numpy as np
+import pdfkit
+import zipfile
+import tempfile
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 checklist = Blueprint('checklist', __name__)
 planilha_cargas_cache = {}
+config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
 
 def extrair_cor(texto):
     """
@@ -535,6 +540,71 @@ def importar_recurso():
     except Exception as e:
         return jsonify({"error": f"Erro ao processar arquivo: {str(e)}"}), 500
 
+def gerar_pdf_da_carreta(args):
+    data_carga, recurso, serie = args
+    modelo_url = f"http://192.168.3.3:8083/modelo?dataCarga={data_carga}&recurso={recurso}&serie={serie}"
+
+    options = {
+        'page-size': 'A4',
+        'margin-top': '0.75in',
+        'margin-right': '0.75in',
+        'margin-bottom': '0.75in',
+        'margin-left': '0.75in',
+        'encoding': "UTF-8",
+        'no-outline': None,
+        'enable-local-file-access': None,
+        'javascript-delay': 2000,
+        'load-error-handling': 'ignore',
+        'load-media-error-handling': 'ignore'
+    }
+    
+    try:
+        pdf_bytes = pdfkit.from_url(modelo_url, False, options=options, configuration=config)
+        filename = f'checklist_{recurso}_{serie}.pdf'
+        return (filename, pdf_bytes)
+    except Exception as e:
+        print(f"Erro ao gerar PDF para {recurso}-{serie}: {str(e)}")
+        return None
+
+@checklist.route('/api/gerar-pdfs-zip', methods=['POST'])
+def gerar_pdfs_zip():
+    try:
+        data = request.get_json()
+        data_carga = data.get('dataCarga')
+        carretas = data.get('carretas', [])
+        
+        if not data_carga or not carretas:
+            return jsonify({'error': 'Parâmetros obrigatórios não fornecidos'}), 400
+        
+        zip_buffer = BytesIO()
+        
+        # Preparar args para cada carreta
+        args_list = [(data_carga, carreta[0], carreta[1]) for carreta in carretas]
+        
+        with ProcessPoolExecutor() as executor:
+            futures = [executor.submit(gerar_pdf_da_carreta, args) for args in args_list]
+            
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                for future in as_completed(futures):
+                    result = future.result()
+                    if result:
+                        filename, pdf_bytes = result
+                        zip_file.writestr(filename, pdf_bytes)
+        
+        zip_buffer.seek(0)
+        filename = f'checklists_{data_carga}.zip'
+        
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/zip'
+        )
+        
+    except Exception as e:
+        print(f"Erro ao gerar ZIP dos PDFs: {str(e)}")
+        return jsonify({'error': f'Erro interno do servidor: {str(e)}'}), 500
+    
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True, host="0.0.0.0", port=8083)
