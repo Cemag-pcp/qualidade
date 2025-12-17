@@ -311,7 +311,7 @@ def gerar_modelo():
         })
 
     #Tirante
-    if not recurso.lower().find('roçax') != -1 or not recurso.lower().find('f6') != -1 or not recurso.lower().find('f4') != -1 or not recurso.lower().find('fa5') != -1 or not recurso.lower().find('ftc4300') != -1 or not recurso.lower().find('ftc6500') != -1 or not recurso.lower().find('ftc10500') != -1: 
+    if not recurso.lower().find('roçax') != -1 or not recurso.lower().find('f6') != -1 or not recurso.lower().find('f4') != -1 or not recurso.lower().find('fa5') != -1 or not recurso.lower().find('ftc4300') != -1 or not recurso.lower().find('ftc6500') != -1 or not recurso.lower().find('ftc6500r') != -1 or not recurso.lower().find('ftc10500') != -1: 
         
         acessorios_extras.append({
             "codigo": "TIRANTE DA TRAVA COMPLETO",
